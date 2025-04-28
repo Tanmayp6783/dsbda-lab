@@ -1,0 +1,38 @@
+import requests
+ from bs4 import BeautifulSoup
+
+ # Headers to mimic a browser visit
+ HEADERS = {
+ 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 \
+                   (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36',
+ 'Accept-Language': 'en-US, en;q=0.5'
+ }
+
+ def fetch_soup(url):
+ """Fetch and parse HTML content from a URL."""
+    response = requests.get(url, headers=HEADERS)
+ return BeautifulSoup(response.text, 'html.parser')
+ 
+def extract_customer_names(soup):
+ return [tag.get_text(strip=True) for tag in soup.find_all("span", class_="a-profile-name")]
+ 
+def extract_reviews(soup):
+ return [tag.get_text(strip=True) for tag in soup.find_all("span", class_="a-size-medium a-color-base")]
+ 
+def extract_ratings(soup):
+ return [tag.get_text(strip=True) for tag in soup.find_all("i", class_="a-icon-star")]
+
+ def extract_comment_tags(soup):
+ return [tag.get_text(strip=True) for tag in soup.find_all("span", class_="a-size-base a-color-secondary")]
+
+ # Example usage
+ url = "
+ https://www.amazon.in/realme-TechLife-Headphone-Pl
+ aytime-ANC-White/dp/B0DJFHSFGG/ref=sr_1_3?crid=32O
+ LSLQ69VW07&dib=eyJ2IjoiMSJ9.tPGi
+ soup = fetch_soup(url)
+ 
+print("Customer Names:", extract_customer_names(soup))
+ print("\nReviews:", extract_reviews(soup))
+ print("\nRatings:", extract_ratings(soup))
+ print("\nComment Tags:", extract_comment_tags(soup))
