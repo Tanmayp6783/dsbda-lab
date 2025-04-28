@@ -1,0 +1,94 @@
+import requests
+from bs4 import BeautifulSoup
+import pandas as pd
+
+HEADERS = ({'User-Agent':
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) \
+            AppleWebKit/537.36 (KHTML, like Gecko) \
+            Chrome/90.0.4430.212 Safari/537.36',
+            'Accept-Language': 'en-US, en;q=0.5'})
+
+
+def getdata(site_url):
+  res=requests.get(site_url,headers=HEADERS)
+  return res.text
+
+def gethtml(site_url):
+    data = getdata(site_url)
+    soup = BeautifulSoup(data, 'html.parser')
+    return soup
+
+site_url = "  fcgagsah"
+
+soup = gethtml(site_url)
+
+def getCustomerName(soup):
+    customer_list = []
+    for item in soup.find_all("span", class_="a-profile-name"):
+        customer_list.append(item.get_text())
+    return customer_list
+
+ def getRating(soup):
+    rating_list = []
+    for item in soup.find_all("i", {"data-hook": "review-star-rating"}):
+        if item:
+            rating_list.append(item.get_text().strip())
+    if not rating_list:
+        for item in soup.find_all("span", class_="a-icon-alt"):
+            rating_list.append(item.get_text())
+    return rating_list
+
+ def getReviewDate(soup):
+    date_list = []
+    for item in soup.find_all("span", {"data-hook": "review-date"}):
+        date_list.append(item.get_text())
+    if not date_list:
+        for item in soup.find_all("span", class_="review-date"):
+            date_list.append(item.get_text())
+    return date_list
+
+ def getReviewContent(soup):
+    content_list = []
+    for item in soup.find_all("span", {"data-hook": "review-body"}):
+        content_list.append(item.get_text().strip())
+    return content_list
+
+customer_res = getCustomerName(soup)
+rating = getRating(soup)
+date = getReviewDate(soup)
+contents = getReviewContent(soup)
+
+ print(f"Found {len(customer_res)} customer names")
+ print(f"Found {len(rating)} ratings")
+ print(f"Found {len(date)} dates")
+ print(f"Found {len(contents)} contents")
+
+ lists = [customer_res, rating, date, contents]
+ non_empty_lists = [lst for lst in lists if lst]  # Filter out empty lists
+ if non_empty_lists:
+    min_len = min(len(lst) for lst in non_empty_lists)
+ else:
+    min_len = 0
+print(f"Minimum length across all lists: {min_len}")
+customer_res = customer_res[:min_len] if customer_res else ["N/A"] * min_len
+rating = rating[:min_len] if rating else ["N/A"] * min_len
+date = date[:min_len] if date else ["N/A"] * min_len
+contents = contents[:min_len] if contents else ["N/A"] * min_len
+
+df = pd.DataFrame({
+    'Customer Name': customer_res,
+    'Rating': rating,
+    'Review Date': date,
+    'Review Content': contents
+ })
+
+ 
+pd.set_option('display.max_rows', None)
+ pd.set_option('display.max_columns', None)
+ pd.set_option('display.width', 1000)
+ pd.set_option('display.max_colwidth', 100)
+
+ print("\n=== Amazon Product Reviews ===\n")
+ print(df)
+
+

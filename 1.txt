@@ -1,0 +1,55 @@
+import pandas as pd
+
+df = pd.read_csv('dataset_Facebook.csv',delimiter=';')
+
+df.head()
+
+*Cleaning dataset and removing null values
+print(df.isnull().sum())
+
+df.fillna(0, inplace=True)
+
+df
+
+*subset
+ df_subset_1 = df[['like','share']]
+ df_subset_1
+
+ df_subset_2 = df[['comment','Type']]
+ df_subset_2
+
+ df_subset_3 = df[['Post Hour','Paid']]
+ df_subset_3
+
+df_subset_4 = df[['Lifetime Engaged Users','Total Interactions']]
+ df_subset_4
+
+*merge data
+df_subset_1 = df[['like', 'share']]
+ df_subset_2 = df[['comment', 'Type']]
+ df_subset_3 = df[['Post Hour', 'Paid']]
+ df_subset_4 = df[['Lifetime Engaged Users', 'Total Interactions']]
+ merged_data = df_subset_1.join([df_subset_2, df_subset_3, df_subset_4])
+ print(merged_data)
+
+*shape
+merged_data.shape
+
+*sort
+ merged_data.sort_values(by=['like'],ascending=False)
+
+*Trasposing data
+merged_data.transpose()
+
+*reshape
+ df_combined= pd.concat([df_subset_1,df_subset_2,df_subset_3,df_subset_4],␣
+ ↪axis=1)
+ df_combined['Row_ID'] = df_combined.index
+ df_melted =df_combined.melt(id_vars=['Row_ID'],var_name='Metric',␣
+ ↪value_name='Value')
+ print(df_melted)
+
+df_pivoted= df_melted.pivot(index='Row_ID',columns='Metric',values='Value').
+ ↪reset_index(drop=True)
+ print(df_pivoted)
+

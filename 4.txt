@@ -1,0 +1,82 @@
+import pandas as pd
+A=pd.read_csv("HeartDisease.csv")
+
+A=A.drop_duplicates()
+A
+
+A.isna().sum()
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+A.columns
+
+*pie chart
+sex_counts=A['sex'].value_counts()
+plt.figure(figsize=(6,6))
+plt.pie(sex_counts,labels=['Male','Female'],autopct='%1.1f%%',startangle=90)
+plt.title('Distribution of Sex')
+plt.show()
+
+*bar plot
+avg_chol_by_cp = A.groupby('chest pain')['chol'].mean()
+plt.bar(avg_chol_by_cp.index,avg_chol_by_cp.values)
+plt.xlabel('Chest Pain Type')
+plt.ylabel('Average Cholestrol')
+plt.title('Average Cholestrol levels by Chest Pain Type')
+plt.show()
+
+*box
+ plt.figure(figsize=(8, 6))
+ sns.boxplot(x='thal', y='age', data=A)
+ plt.xlabel('Heart Disease (1=Yes, 0=No)')
+ plt.ylabel('Age')
+ plt.title('Distribution of Age by Heart Disease Presence')
+ plt.show()
+
+*histogram
+ plt.figure(figsize=(8, 6))
+ plt.hist(A['chol'], bins=10)
+ plt.xlabel('Resting Blood Pressure')
+ plt.ylabel('Frequency')
+ plt.title('Distribution of Resting Blood Pressure')
+ plt.show()
+
+*scatter
+plt.figure(figsize=(8,6))
+plt.scatter(A['age'], A['thalach'])
+plt.xlabel('Age')
+plt.ylabel('Maximum Heart Rate')
+plt.title('Relationship between Age and Maximum Heart Rate')
+plt.show()
+
+*heatmap
+ plt.figure(figsize=(10, 8))
+ sns.heatmap(A.corr(), annot=True, cmap='coolwarm')
+ plt.title('Correlation Matrix of Heart Disease Dataset')
+ plt.show()
+
+
+*lineplot
+ plt.figure(figsize=(8, 6))
+ sns.lineplot(data=A, x='age', y='chol', hue='sex')
+ plt.xlabel('Age')
+ plt.ylabel('Cholesterol')
+ plt.title('Cholesterol Levels vs. Age (Colored by Heart Disease)')
+
+*pairplot
+ temp_df = A[['age', 'chest pain', 'trestbps', 'chol', 'fps', 'num']]
+ sns.pairplot(temp_df, hue='num')
+ plt.show()
+
+*wordcloud
+!pip install wordcloud
+from wordcloud import WordCloud
+import matplotlib.pyplot as plt
+with open("samplewords.txt", 'r') as f:
+    text=f.read()
+wordcloud= WordCloud(width=300, height=400, background_color="white").generate(text)
+plt.figure(figsize=(10, 5))
+plt.imshow(wordcloud, interpolation ='bilinear')
+plt.axis('off')
+plt.show()
